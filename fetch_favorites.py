@@ -1,8 +1,7 @@
-import collections
+import dataclasses
 import dataclasses
 import os
-import typing
-from typing import Union, Optional, List, Dict, Tuple
+from typing import Union, Optional, List, Tuple
 
 from bs4 import BeautifulSoup
 from selenium import webdriver

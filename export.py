@@ -1,4 +1,5 @@
 import os
+import re
 from typing import TextIO, List
 
 from geojson import Feature, Point, FeatureCollection, dump
@@ -21,11 +22,16 @@ def dump_favorites_to_geojson(favorites: List[Favorite], stream: TextIO):
     for item in favorites:
         link_body = f"{item.main_title}\n{item.bargain_info}"
         description = f'<a target="_blank" rel="noopener noreferrer" href={item.url}>{link_body}</a>'
+        short_address = item.address
+        m = re.search(r"([\w\s]+, [\w\s]+)$", item.address)
+        if m:
+            short_address = m.group()
+
         feature = Feature(
             geometry=Point(item.location),
             properties={
                 "description": description,
-                "iconCaption": f"{item.address} {item.main_title} {item.bargain_info}",
+                "iconCaption": f"{short_address}",
                 "marker-color": "#1e98ff"
             }
         )
