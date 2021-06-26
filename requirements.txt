@@ -1,3 +1,4 @@
 selenium
 ipython
 beautifulsoup4
+geopy
