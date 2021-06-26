@@ -1,6 +1,6 @@
 import os
 import re
-from typing import TextIO, List
+from typing import List
 
 from geojson import Feature, Point, FeatureCollection, dump
 
@@ -9,7 +9,7 @@ from browser_utils import make_driver
 from fetch_favorites import fetch_favorites_from_cian, Favorite
 
 
-def dump_favorites_to_geojson(favorites: List[Favorite], stream: TextIO):
+def compose_geojson_from_favorites(favorites: List[Favorite]) -> FeatureCollection:
     geocoder = Geocoder(user_agent="cian-rent-map")
     for item in favorites:
         location = geocoder.geocode(address=item.address)
@@ -46,11 +46,12 @@ def dump_favorites_to_geojson(favorites: List[Favorite], stream: TextIO):
         }
     )
 
-    dump(feature_collection, stream, indent=4)
+    return feature_collection
 
 
 if __name__ == '__main__':
-    driver = make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS')))
-    favorites = fetch_favorites_from_cian(driver=driver)
-    with open("map.geojson", "w") as f:
-        dump_favorites_to_geojson(favorites=favorites, stream=f)
+    with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
+        favorites = fetch_favorites_from_cian(driver=driver)
+        with open("map.geojson", "w") as f:
+            feature_collection = compose_geojson_from_favorites(favorites=favorites)
+            dump(feature_collection, f, indent=4)

@@ -1,8 +1,11 @@
+from contextlib import contextmanager
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.remote.webdriver import WebDriver
 
 
+@contextmanager
 def make_driver(headless: bool = True) -> WebDriver:
     chrome_options = ChromeOptions()
     if headless:

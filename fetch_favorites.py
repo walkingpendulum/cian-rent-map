@@ -59,5 +59,5 @@ def fetch_favorites_from_cian(driver: WebDriver) -> List[Favorite]:
 
 
 if __name__ == '__main__':
-    driver = make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS')))
-    parsed_items = fetch_favorites_from_cian(driver=driver)
+    with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
+        parsed_items = fetch_favorites_from_cian(driver=driver)
