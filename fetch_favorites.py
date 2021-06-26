@@ -1,17 +1,14 @@
 import dataclasses
-import dataclasses
 import os
-from typing import Union, Optional, List, Tuple
+from typing import List, Tuple
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-DriverOptions = Union[ChromeOptions]
+from browser_utils import make_driver
 
 
 @dataclasses.dataclass
@@ -21,11 +18,6 @@ class Favorite:
     main_title: str
     url: str
     location: Tuple[float, float] = dataclasses.field(default=tuple())
-
-
-def make_driver(options: Optional[DriverOptions] = None) -> WebDriver:
-    driver = webdriver.Chrome(options=options)
-    return driver
 
 
 def authorize_at_cian(username: str, password: str, driver: WebDriver) -> None:
@@ -39,12 +31,7 @@ def authorize_at_cian(username: str, password: str, driver: WebDriver) -> None:
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "user-avatar")))
 
 
-def fetch_favorites_from_cian(headless: bool = True) -> List[Favorite]:
-    chrome_options = ChromeOptions()
-    if headless:
-        chrome_options.add_argument("--headless")
-
-    driver = make_driver(options=chrome_options)
+def fetch_favorites_from_cian(driver: WebDriver) -> List[Favorite]:
     driver.get("https://cian.ru")
 
     username, password = os.environ["USERNAME"], os.environ["PASSWORD"]
@@ -72,4 +59,5 @@ def fetch_favorites_from_cian(headless: bool = True) -> List[Favorite]:
 
 
 if __name__ == '__main__':
-    parsed_items = fetch_favorites_from_cian(headless=not bool(os.getenv('DISABLE_HEADLESS')))
+    driver = make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS')))
+    parsed_items = fetch_favorites_from_cian(driver=driver)
