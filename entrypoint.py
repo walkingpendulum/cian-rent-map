@@ -16,10 +16,12 @@ if __name__ == '__main__':
     with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
         authorize_at_cian(username=cian_username, password=cian_password, driver=driver)
         favorites = fetch_favorites_from_cian(driver=driver)
-        with open("map.geojson", "w") as f:
-            feature_collection = compose_geojson_from_favorites(favorites=favorites)
-            geojson.dump(feature_collection, f, indent=4)
 
+    with open("map.geojson", "w") as f:
+        feature_collection = compose_geojson_from_favorites(favorites=favorites)
+        geojson.dump(feature_collection, f, indent=4)
+
+    with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
         authorize_at_ya(username=ya_username, password=ya_password, driver=driver)
         map_js_code_str = import_geojson_to_ya(file_path=str(pathlib.Path("./map.geojson").resolve()), driver=driver)
         with open("map.html", "w") as f:
