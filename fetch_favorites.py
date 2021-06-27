@@ -36,8 +36,6 @@ def fetch_favorites_from_cian(driver: WebDriver) -> List[Favorite]:
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "*[data-name='FavoriteEntity']")))
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.quit()
-
     favorites = soup.find_all('div', attrs={"data-name": "FavoriteEntity"})
 
     parsed_items = []
