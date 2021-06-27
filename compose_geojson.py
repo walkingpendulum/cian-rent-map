@@ -24,7 +24,7 @@ def compose_geojson_from_favorites(favorites: List[Favorite]) -> FeatureCollecti
         link_body = f"{item.main_title}\n{item.bargain_info}"
         description = f'<a target="_blank" rel="noopener noreferrer" href={item.url}>{link_body}</a>'
         short_address = item.address
-        m = re.search(r"([\w\s]+, [\w\s]+)$", item.address)
+        m = re.search(r"([\w\s\-\.]+, [\w\s\-\.]+)$", item.address)
         if m:
             short_address = m.group()
 
