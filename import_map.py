@@ -8,7 +8,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.common.exceptions import StaleElementReferenceException
 from browser_utils import make_driver, click_until_clicks
 
 
@@ -45,7 +45,11 @@ def cleanup_rent_maps(driver: WebDriver, except_first_n: int = 1):
     while True:
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "map-selection-item")))
         map_selection_items: List[WebElement] = driver.find_elements_by_class_name("map-selection-item")
-        rent_items = [item for item in map_selection_items if "rent 2021" in item.text]
+        try:
+            rent_items = [item for item in map_selection_items if "rent 2021" in item.text]
+        except StaleElementReferenceException:
+            break
+
         rent_items_to_delete = rent_items[except_first_n:]
         if not rent_items_to_delete:
             break
