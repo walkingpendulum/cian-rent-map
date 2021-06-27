@@ -6,9 +6,15 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 
 @contextmanager
-def make_driver(headless: bool = True) -> WebDriver:
+def make_driver(headless: bool = True, cleanup: bool = True) -> WebDriver:
     chrome_options = ChromeOptions()
     if headless:
         chrome_options.add_argument("--headless")
 
-    return webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        yield driver
+    finally:
+        if cleanup:
+            driver.quit()
