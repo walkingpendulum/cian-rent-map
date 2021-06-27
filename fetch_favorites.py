@@ -32,11 +32,6 @@ def authorize_at_cian(username: str, password: str, driver: WebDriver) -> None:
 
 
 def fetch_favorites_from_cian(driver: WebDriver) -> List[Favorite]:
-    driver.get("https://cian.ru")
-
-    username, password = os.environ["USERNAME"], os.environ["PASSWORD"]
-    authorize_at_cian(username=username, password=password, driver=driver)
-
     driver.get("https://cian.ru/rent/flat/favorites/")
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "*[data-name='FavoriteEntity']")))
 
@@ -60,4 +55,6 @@ def fetch_favorites_from_cian(driver: WebDriver) -> List[Favorite]:
 
 if __name__ == '__main__':
     with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
+        username, password = os.environ["USERNAME"], os.environ["PASSWORD"]
+        authorize_at_cian(username=username, password=password, driver=driver)
         parsed_items = fetch_favorites_from_cian(driver=driver)

@@ -6,7 +6,7 @@ from geojson import Feature, Point, FeatureCollection, dump
 
 from addresses import Geocoder
 from browser_utils import make_driver
-from fetch_favorites import fetch_favorites_from_cian, Favorite
+from fetch_favorites import fetch_favorites_from_cian, Favorite, authorize_at_cian
 
 
 def compose_geojson_from_favorites(favorites: List[Favorite]) -> FeatureCollection:
@@ -51,6 +51,8 @@ def compose_geojson_from_favorites(favorites: List[Favorite]) -> FeatureCollecti
 
 if __name__ == '__main__':
     with make_driver(headless=not bool(os.getenv('DISABLE_HEADLESS'))) as driver:
+        username, password = os.environ["USERNAME"], os.environ["PASSWORD"]
+        authorize_at_cian(username=username, password=password, driver=driver)
         favorites = fetch_favorites_from_cian(driver=driver)
         with open("map.geojson", "w") as f:
             feature_collection = compose_geojson_from_favorites(favorites=favorites)
